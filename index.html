@@ -19,21 +19,26 @@ input {
 
 <form action="/tasks/add" class="form-horizontal" id="TaskAddForm" method="post" accept-charset="utf-8"><div style="display:none;"><input type="hidden" name="_method" value="POST"></div>	<fieldset>
 		<legend>Add Task</legend>
-	<div class="control-group required" data-validation="required"><label for="TaskName" class="control-label" data-validation="">Name</label><div class="controls"><input name="data[Task][name]" class="input-xlarge" maxlength="200" type="text" id="TaskName"></div></div><div class="control-group required"><label for="TaskTaskStatusId" class="control-label" data-validation="">Task Status</label><div class="controls"><select name="data[Task][task_status_id]" class="input-xlarge" id="TaskTaskStatusId">
+	<div class="control-group required" data-validation="required"><label for="TaskName" class="control-label">Name</label><div class="controls"><input name="data[Task][name]" class="input-xlarge" maxlength="200" type="text" id="TaskName"></div></div><div class="control-group required"><label for="TaskTaskStatusId" class="control-label">Task Status</label><div class="controls"><select name="data[Task][task_status_id]" class="input-xlarge" id="TaskTaskStatusId">
 <option value="1">Unassigned</option>
 <option value="2">In Progress</option>
 <option value="3">Ready For Review</option>
 <option value="4">In Review</option>
 <option value="5">Ready For Release</option>
 <option value="6">Released</option>
-</select></div></div><div class="control-group required" data-validation="required"><label for="TaskDescription" class="control-label" data-validation="">Description</label><div class="controls"><textarea name="data[Task][description]" class="input-xlarge" cols="30" rows="6" id="TaskDescription"></textarea></div></div><div class="control-group"><label for="TaskPriority" class="control-label" data-validation="">Priority</label><div class="controls"><select name="data[Task][priority]" class="input-xlarge" id="TaskPriority">
+</select></div></div><div class="control-group required" data-validation="required"><label for="TaskDescription" class="control-label">Description</label><div class="controls"><textarea name="data[Task][description]" class="input-xlarge" cols="30" rows="6" id="TaskDescription"></textarea></div></div><div class="control-group"><label for="TaskPriority" class="control-label">Priority</label><div class="controls"><select name="data[Task][priority]" class="input-xlarge" id="TaskPriority">
 <option value="0">Very Low</option>
 <option value="1">Low</option>
 <option value="2" selected="selected">Normal</option>
 <option value="3">High</option>
 <option value="4">Very High</option>
-</select></div></div><div class="control-group"><label for="TaskBranch" class="control-label" data-validation="">Branch</label><div class="controls"><input name="data[Task][branch]" class="input-xlarge" maxlength="40" type="text" id="TaskBranch"></div></div><div class="control-group"><label for="TaskCommit" class="control-label" data-validation="">Commit</label><div class="controls"><input name="data[Task][commit]" class="input-xlarge" maxlength="10" type="text" id="TaskCommit"></div></div>	
-	</fieldset><input type="hidden" name="ajax" value="1"></form>
+</select></div></div><div class="control-group"><label for="TaskBranch" class="control-label">Branch</label><div class="controls"><input name="data[Task][branch]" class="input-xlarge" maxlength="40" type="text" id="TaskBranch"></div></div><div class="control-group"><label for="TaskCommit" class="control-label">Commit</label><div class="controls"><input name="data[Task][commit]" class="input-xlarge" maxlength="10" type="text" id="TaskCommit"></div></div>	
+
+<div class="form-actions">
+    <input class="btn btn-primary" type="submit" value="Add">
+	<input class="btn btn-danger" type="reset" value="Reset">
+</div>
+	</fieldset></form>
 
         </div>
     </div>
