@@ -6,6 +6,31 @@ var Validation = {
             x: 20,
             y: 0
         },
+        onValid: function(){
+            this.closest('.control-group').removeClass('error').addClass('success');
+            //this.removeClass('invalid');
+        },
+        onInvalid: function(){
+            this.closest('.control-group').addClass('error').removeClass('success');
+            //this.addClass('invalid');
+        },
+        validationData: function(){
+            var controlGroup = this.closest('.control-group');
+            if(controlGroup.length){
+                return controlGroup.data('validation');
+            }
+            return this.data('validation');
+        },
+        onResetForm: function(Validation){
+            this.find('input, textarea, select').each(function(){
+                var elem = $(this);
+                Validation.removeMessage(elem);
+                $(this).closest('.control-group').removeClass('error').removeClass('success');
+            });
+        },
+        onFocus: function(){
+            this.closest('.control-group').removeClass('error').removeClass('success');
+        },
         fadeTime: 400
     },
 
@@ -13,7 +38,7 @@ var Validation = {
         var self = this;
         var firstInvalidElem = '';
 
-        elem.find('[data-validation]').each(function(index2, value2){
+        elem.find('input, textarea, select').each(function(index2, value2){
             var res = self.validateElement($(this));
 
             if(!res){
@@ -32,6 +57,38 @@ var Validation = {
         return false;
     },
     
+    setupValidationOnForm: function(form){
+        var self = this;
+        if(!form.is('form')){
+            return;
+        }
+        form.on('change focusout', 'input, select, textarea, option', function(event){
+            var elem = $(this);
+            self.validateElement(elem, event);
+        });
+
+        form.on('focusin', '[data-validation]', function(event){
+            var elem = $(this);
+            self.config.onFocus.apply(elem);
+            self.removeMessage(elem);
+        });
+
+        form.on('submit', function(event){
+            var isFormValid = form.validate();
+
+            if(!isFormValid){
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+        });
+        
+        form.on('reset', function(){
+            self.config.onResetForm.apply(form, [self]);
+        });
+        
+        form.data('validated', true);
+    },
+    
     init: function(){
         var self = this;
         //initialize validation on forms
@@ -40,37 +97,24 @@ var Validation = {
         });
 
         var forms = $('form');
-
+        
         $.fn.validate = function(){
             return Validation.validate($(this));
+        };
+        
+        $.fn.setupValidation = function(){
+            return Validation.setupValidationOnForm($(this));
         };
 
         forms.each(function(index){
             var form = $(this);
-
-            form.on('change focusout', '[data-validation]', function(event){
-                var elem = $(this);
-                self.validateElement(elem, event);
-            });
-
-            form.on('focusin', '[data-validation]', function(event){
-                var elem = $(this);
-                self.removeMessage(elem);
-            });
-
-            form.on('submit', function(event){
-                var isFormValid = form.validate();
-
-                if(!isFormValid){
-                    event.preventDefault();
-                }
-            });
-
-            $('body').on('click', '.validation-message', function(event){
-                var msgElem = $(this);
-                var targetElem = msgElem.data('target');
-                self.removeMessage(targetElem, msgElem);
-            });
+            form.setupValidation();
+        });
+        
+        $('body').on('click', '.validation-message', function(event){
+            var msgElem = $(this);
+            var targetElem = msgElem.data('target');
+            self.removeMessage(targetElem, msgElem);
         });
     },
 
@@ -102,8 +146,6 @@ var Validation = {
 
         elem.data('target', targetElem);
         targetElem.data('validation-message', elem);
-
-        targetElem.addClass('invalid');
 
         elem.appendTo(self.body_elm);
         self.positionMessage(elem, targetElem);
@@ -141,8 +183,6 @@ var Validation = {
             //console.warn('At this time, there is no message element for the element: ', targetElem);
             return;
         }
-
-        targetElem.removeClass('invalid');
 
         msgElem.remove();
         targetElem.removeData('validation-message');
@@ -192,14 +232,14 @@ var Validation = {
 
         var self = this;
 
+        var validationData = self.config.validationData.apply(element);
+
         //first check if the element can have a text value (text input, number, textarea, etc.)
         var isElementText = (element.is('[type="text"]') || element.is('textarea'));
 
         var messages = [];
 
         if(isElementText){
-
-            var validationData = element.data('validation');
 
             if(validationData){
                 var conditions = validationData.split(',');
@@ -239,8 +279,6 @@ var Validation = {
         var isElementSelect = element.is('select');
 
         if(isElementSelect){
-
-            var validationData = element.data('validation');
 
             if(validationData){
                 var conditions = validationData.split(',');
@@ -312,7 +350,11 @@ var Validation = {
 
         self.handleMessages(element, messages);
 
-        return (messages.length === 0);
+        var isElemValid = (messages.length === 0);
+        
+        (isElemValid ? self.config.onValid : self.config.onInvalid).apply(element);
+
+        return isElemValid;
     }
 
 };
